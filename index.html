@@ -18,6 +18,7 @@
     <div class="cards">
       <button class="card" data-section="verbes">🗣️ <span>Verbes</span><small>conjugaison, phrases, négation, pronominaux</small></button>
       <button class="card" data-section="articles">📝 <span>Articles &amp; petits mots</span><small>un, le, mon, ce, sur, dans…</small></button>
+      <button class="card" data-section="histoires">📚 <span>Histoires</span><small>lecture + quiz de compréhension (A1 → B2)</small></button>
     </div>
   </nav>
 
@@ -170,8 +171,58 @@
     </article>
   </section>
 
+  <!-- HISTOIRES : choix du niveau -->
+  <section id="levelPicker" class="screen hidden">
+    <button class="back" data-back="rootMenu">← Accueil</button>
+    <h2>Choisis ton niveau</h2>
+    <div class="cards">
+      <button class="card" data-level="A1">🌱 <span>A1 — Débutant</span><small>présent, phrases courtes</small></button>
+      <button class="card" data-level="A2">🌿 <span>A2 — Élémentaire</span><small>passé composé, récits simples</small></button>
+      <button class="card" data-level="B1">🌳 <span>B1 — Intermédiaire</span><small>récits plus longs, imparfait</small></button>
+      <button class="card" data-level="B2">🍁 <span>B2 — Avancé</span><small>textes nuancés, subjonctif</small></button>
+    </div>
+  </section>
+
+  <!-- HISTOIRES : liste des histoires du niveau -->
+  <section id="storyList" class="screen hidden">
+    <button class="back" data-back="levelPicker">← Niveaux</button>
+    <h2 id="storyListTitle"></h2>
+    <div id="storyListContent" class="cards"></div>
+  </section>
+
+  <!-- HISTOIRES : lecture -->
+  <section id="storyView" class="screen hidden">
+    <button class="back" data-back="storyList">← Histoires</button>
+    <h2 id="storyTitle"></h2>
+    <div class="story" id="storyText"></div>
+    <button id="startStoryQuiz" class="primary">Commencer le quiz →</button>
+  </section>
+
+  <!-- HISTOIRES : quiz de compréhension -->
+  <section id="storyQuiz" class="screen hidden">
+    <button class="back" data-back="storyView">← Relire l'histoire</button>
+    <h2 id="sqTitle"></h2>
+    <div class="quizcard" id="sqCard">
+      <div class="progress" id="sqProgress"></div>
+      <div class="question" id="sqQuestion"></div>
+      <div class="options" id="sqOptions"></div>
+      <div class="feedback hidden" id="sqFeedback"></div>
+      <button id="sqNext" class="primary hidden">Suivant →</button>
+    </div>
+    <div class="quizcard hidden" id="sqResult">
+      <div class="score" id="sqScore"></div>
+      <div class="scoreMsg" id="sqScoreMsg"></div>
+      <button id="sqRetry" class="primary">Recommencer</button>
+      <button id="sqBackList" class="primary ghost">← Autre histoire</button>
+    </div>
+  </section>
+
   <script src="data.js"></script>
   <script src="extras.js"></script>
+  <script src="stories-a1.js"></script>
+  <script src="stories-a2.js"></script>
+  <script src="stories-b1.js"></script>
+  <script src="stories-b2.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

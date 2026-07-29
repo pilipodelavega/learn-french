@@ -120,3 +120,40 @@ h2 { font-size: 1.15rem; margin: 18px 0 12px; }
 .grid th, .grid td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; }
 .grid th { color: var(--muted); font-weight: 600; }
 .grid td:first-child { color: var(--muted); }
+
+/* ---------- Histoires ---------- */
+.story {
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+  padding: 18px 20px; box-shadow: var(--shadow); line-height: 1.75;
+  font-size: 1.02rem; margin-bottom: 14px;
+}
+.story p { margin: 0 0 12px; }
+.story p:last-child { margin-bottom: 0; }
+
+/* carte d'une histoire dans la liste */
+.card.story-card { flex-direction: row; align-items: center; gap: 12px; font-size: 1rem; padding: 14px 16px; }
+.card.story-card .num {
+  flex: 0 0 34px; height: 34px; border-radius: 50%; background: var(--blue); color: #fff;
+  display: flex; align-items: center; justify-content: center; font-size: .85rem; font-weight: 700;
+}
+.card.story-card .t { display: flex; flex-direction: column; gap: 2px; }
+.card.story-card .t span { font-size: 1rem; font-weight: 600; }
+
+/* quiz de compréhension */
+.question { font-size: 1.12rem; font-weight: 600; line-height: 1.45; margin-bottom: 16px; text-align: left; }
+.options { display: grid; gap: 8px; }
+.options button {
+  text-align: left; background: var(--bg); border: 1px solid var(--line); border-radius: 12px;
+  padding: 12px 14px; font-size: .97rem; color: var(--ink); cursor: pointer; line-height: 1.4;
+}
+.options button:hover:not(:disabled) { border-color: var(--blue); }
+.options button:disabled { cursor: default; }
+.options button.good { background: rgba(22, 163, 74, .14); border-color: var(--green); color: var(--green); font-weight: 600; }
+.options button.bad  { background: rgba(220, 38, 38, .12); border-color: #dc2626; color: #dc2626; font-weight: 600; }
+.feedback { margin-top: 14px; font-weight: 600; }
+.feedback.ok { color: var(--green); }
+.feedback.ko { color: #dc2626; }
+.score { font-size: 2rem; font-weight: 700; }
+.scoreMsg { color: var(--muted); margin: 8px 0 18px; }
+.primary.ghost { background: none; color: var(--blue); border: 1px solid var(--line); margin-top: 8px; }
+.primary.ghost:hover { background: var(--bg); }

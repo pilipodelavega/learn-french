@@ -45,7 +45,8 @@ function elide(i, form) {
 
 /* ---------- Navigation entre écrans ---------- */
 
-const screens = ["rootMenu", "nav", "groupPicker", "listeView", "quizView", "articlesMenu", "lessonView"];
+const screens = ["rootMenu", "nav", "groupPicker", "listeView", "quizView", "articlesMenu", "lessonView",
+                 "levelPicker", "storyList", "storyView", "storyQuiz"];
 function show(id) {
   screens.forEach(s => document.getElementById(s).classList.toggle("hidden", s !== id));
   window.scrollTo(0, 0);
@@ -58,7 +59,9 @@ let state = { section: "verbes", mode: "liste", group: "groupe1", show: "verbes"
 document.querySelectorAll("#rootMenu .card").forEach(btn => {
   btn.addEventListener("click", () => {
     state.section = btn.dataset.section;
-    show(state.section === "verbes" ? "nav" : "articlesMenu");
+    if (state.section === "verbes")   show("nav");
+    else if (state.section === "articles") show("articlesMenu");
+    else show("levelPicker");
   });
 });
 
@@ -271,6 +274,150 @@ document.getElementById("nextBtn").addEventListener("click", () => {
   }
   showQuizCard();
 });
+
+/* ---------- HISTOIRES ---------- */
+
+// Les niveaux sont fournis par stories-a1.js … stories-b2.js
+const STORIES = {};
+[["A1", "STORIES_A1"], ["A2", "STORIES_A2"], ["B1", "STORIES_B1"], ["B2", "STORIES_B2"]]
+  .forEach(([lvl, varName]) => {
+    if (typeof window[varName] !== "undefined") STORIES[lvl] = window[varName];
+  });
+
+const LEVEL_LABEL = {
+  A1: "A1 — Débutant", A2: "A2 — Élémentaire",
+  B1: "B1 — Intermédiaire", B2: "B2 — Avancé"
+};
+
+let curLevel = "A1";
+let curStory = null;
+let sqIndex = 0, sqScore = 0, sqLocked = false;
+
+// Niveau -> liste des histoires
+document.querySelectorAll("#levelPicker .card").forEach(btn => {
+  btn.addEventListener("click", () => {
+    curLevel = btn.dataset.level;
+    renderStoryList();
+    show("storyList");
+  });
+});
+
+function renderStoryList() {
+  const list = STORIES[curLevel] || [];
+  document.getElementById("storyListTitle").textContent =
+    `${LEVEL_LABEL[curLevel]} — ${list.length} histoire${list.length > 1 ? "s" : ""}`;
+  const box = document.getElementById("storyListContent");
+  box.innerHTML = "";
+
+  if (list.length === 0) {
+    box.innerHTML = `<p class="empty">Aucune histoire pour ce niveau (pas encore ajoutée).</p>`;
+    return;
+  }
+
+  list.forEach((s, i) => {
+    const b = document.createElement("button");
+    b.className = "card story-card";
+    b.innerHTML =
+      `<div class="num">${i + 1}</div>
+       <div class="t"><span>${s.titre}</span><small>${s.questions.length} questions</small></div>`;
+    b.addEventListener("click", () => openStory(i));
+    box.appendChild(b);
+  });
+}
+
+function openStory(i) {
+  curStory = STORIES[curLevel][i];
+  document.getElementById("storyTitle").textContent = curStory.titre;
+  document.getElementById("storyText").innerHTML =
+    curStory.texte.split("\n").filter(p => p.trim()).map(p => `<p>${p.trim()}</p>`).join("");
+  show("storyView");
+}
+
+document.getElementById("startStoryQuiz").addEventListener("click", () => {
+  sqIndex = 0; sqScore = 0;
+  document.getElementById("sqTitle").textContent = curStory.titre;
+  document.getElementById("sqCard").classList.remove("hidden");
+  document.getElementById("sqResult").classList.add("hidden");
+  showQuestion();
+  show("storyQuiz");
+});
+
+function showQuestion() {
+  const q = curStory.questions[sqIndex];
+  sqLocked = false;
+
+  document.getElementById("sqProgress").textContent =
+    `Question ${sqIndex + 1} / ${curStory.questions.length}   ·   Score : ${sqScore}`;
+  document.getElementById("sqQuestion").textContent = q.q;
+
+  const box = document.getElementById("sqOptions");
+  box.innerHTML = "";
+  q.opts.forEach((opt, i) => {
+    const b = document.createElement("button");
+    b.textContent = opt;
+    b.addEventListener("click", () => answer(i, b));
+    box.appendChild(b);
+  });
+
+  const fb = document.getElementById("sqFeedback");
+  fb.classList.add("hidden");
+  fb.className = "feedback hidden";
+  document.getElementById("sqNext").classList.add("hidden");
+}
+
+function answer(i, btn) {
+  if (sqLocked) return;
+  sqLocked = true;
+
+  const q = curStory.questions[sqIndex];
+  const buttons = [...document.getElementById("sqOptions").children];
+  buttons.forEach(b => (b.disabled = true));
+  buttons[q.r].classList.add("good");
+
+  const fb = document.getElementById("sqFeedback");
+  if (i === q.r) {
+    sqScore++;
+    fb.textContent = "✅ Bravo, c'est juste !";
+    fb.className = "feedback ok";
+  } else {
+    btn.classList.add("bad");
+    fb.textContent = `❌ La bonne réponse est : ${q.opts[q.r]}`;
+    fb.className = "feedback ko";
+  }
+
+  const next = document.getElementById("sqNext");
+  next.textContent = sqIndex + 1 >= curStory.questions.length ? "Voir le résultat →" : "Suivant →";
+  next.classList.remove("hidden");
+}
+
+document.getElementById("sqNext").addEventListener("click", () => {
+  sqIndex++;
+  if (sqIndex >= curStory.questions.length) showResult();
+  else showQuestion();
+});
+
+function showResult() {
+  const total = curStory.questions.length;
+  document.getElementById("sqCard").classList.add("hidden");
+  document.getElementById("sqResult").classList.remove("hidden");
+  document.getElementById("sqScore").textContent = `${sqScore} / ${total}`;
+
+  const pct = sqScore / total;
+  document.getElementById("sqScoreMsg").textContent =
+    pct === 1   ? "Parfait ! Tu as tout compris 🎉" :
+    pct >= 0.8  ? "Très bien ! Presque parfait 👏" :
+    pct >= 0.5  ? "Pas mal — relis l'histoire et réessaie 🙂" :
+                  "Courage ! Relis l'histoire tranquillement 💪";
+}
+
+document.getElementById("sqRetry").addEventListener("click", () => {
+  sqIndex = 0; sqScore = 0;
+  document.getElementById("sqCard").classList.remove("hidden");
+  document.getElementById("sqResult").classList.add("hidden");
+  showQuestion();
+});
+
+document.getElementById("sqBackList").addEventListener("click", () => show("storyList"));
 
 /* ---------- Démarrage ---------- */
 show("rootMenu");
