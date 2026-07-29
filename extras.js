@@ -1,0 +1,166 @@
+/* Ajouts : verbes pronominaux, phrases négatives, contenu ARTICLES.
+ * Chargé APRÈS data.js. Fusionné dans DATA par app.js.
+ */
+
+/* ---------- Verbes pronominaux (nouveau groupe) ---------- */
+/* full = 6 formes AVEC le pronom réfléchi (me/te/se/nous/vous/se),
+ * le sujet (je/tu/…) est ajouté par withPronoun. */
+const PRONOMINAUX = [
+  { inf: "se lever",      en: "to get up",        ex: "Je me lève tôt.",              exEn: "I get up early.",
+    neg: "Je ne me lève pas tôt.",              negEn: "I don't get up early.",
+    full: ["me lève","te lèves","se lève","nous levons","vous levez","se lèvent"] },
+  { inf: "se laver",      en: "to wash (oneself)",ex: "Je me lave les mains.",        exEn: "I wash my hands.",
+    neg: "Je ne me lave pas les mains.",        negEn: "I don't wash my hands.",
+    full: ["me lave","te laves","se lave","nous lavons","vous lavez","se lavent"] },
+  { inf: "s'habiller",    en: "to get dressed",   ex: "Je m'habille vite.",           exEn: "I get dressed quickly.",
+    neg: "Je ne m'habille pas vite.",           negEn: "I don't get dressed quickly.",
+    full: ["m'habille","t'habilles","s'habille","nous habillons","vous habillez","s'habillent"] },
+  { inf: "se coucher",    en: "to go to bed",     ex: "Je me couche tard.",           exEn: "I go to bed late.",
+    neg: "Je ne me couche pas tard.",           negEn: "I don't go to bed late.",
+    full: ["me couche","te couches","se couche","nous couchons","vous couchez","se couchent"] },
+  { inf: "se réveiller",  en: "to wake up",       ex: "Je me réveille à sept heures.",exEn: "I wake up at seven.",
+    neg: "Je ne me réveille pas tôt.",          negEn: "I don't wake up early.",
+    full: ["me réveille","te réveilles","se réveille","nous réveillons","vous réveillez","se réveillent"] },
+  { inf: "s'appeler",     en: "to be called",     ex: "Je m'appelle Marie.",          exEn: "My name is Marie.",
+    neg: "Je ne m'appelle pas Marie.",          negEn: "My name is not Marie.",
+    full: ["m'appelle","t'appelles","s'appelle","nous appelons","vous appelez","s'appellent"] },
+  { inf: "se dépêcher",   en: "to hurry",         ex: "Je me dépêche le matin.",      exEn: "I hurry in the morning.",
+    neg: "Je ne me dépêche pas le matin.",      negEn: "I don't hurry in the morning.",
+    full: ["me dépêche","te dépêches","se dépêche","nous dépêchons","vous dépêchez","se dépêchent"] },
+  { inf: "se reposer",    en: "to rest",          ex: "Je me repose le dimanche.",    exEn: "I rest on Sundays.",
+    neg: "Je ne me repose pas le dimanche.",    negEn: "I don't rest on Sundays.",
+    full: ["me repose","te reposes","se repose","nous reposons","vous reposez","se reposent"] },
+  { inf: "se promener",   en: "to take a walk",   ex: "Je me promène dans le parc.",  exEn: "I take a walk in the park.",
+    neg: "Je ne me promène pas dans le parc.",  negEn: "I don't take a walk in the park.",
+    full: ["me promène","te promènes","se promène","nous promenons","vous promenez","se promènent"] },
+  { inf: "s'amuser",      en: "to have fun",      ex: "Je m'amuse bien.",             exEn: "I'm having fun.",
+    neg: "Je ne m'amuse pas ici.",              negEn: "I'm not having fun here.",
+    full: ["m'amuse","t'amuses","s'amuse","nous amusons","vous amusez","s'amusent"] },
+  { inf: "se souvenir",   en: "to remember",      ex: "Je me souviens de toi.",       exEn: "I remember you.",
+    neg: "Je ne me souviens pas de toi.",       negEn: "I don't remember you.",
+    full: ["me souviens","te souviens","se souvient","nous souvenons","vous souvenez","se souviennent"] },
+  { inf: "se sentir",     en: "to feel",          ex: "Je me sens bien.",             exEn: "I feel good.",
+    neg: "Je ne me sens pas bien.",             negEn: "I don't feel good.",
+    full: ["me sens","te sens","se sent","nous sentons","vous sentez","se sentent"] },
+  { inf: "s'asseoir",     en: "to sit down",      ex: "Je m'assois sur la chaise.",   exEn: "I sit down on the chair.",
+    neg: "Je ne m'assois pas ici.",             negEn: "I don't sit down here.",
+    full: ["m'assois","t'assois","s'assoit","nous assoyons","vous assoyez","s'assoient"] },
+  { inf: "se brosser",    en: "to brush",         ex: "Je me brosse les dents.",      exEn: "I brush my teeth.",
+    neg: "Je ne me brosse pas les dents.",      negEn: "I don't brush my teeth.",
+    full: ["me brosse","te brosses","se brosse","nous brossons","vous brossez","se brossent"] },
+  { inf: "se raser",      en: "to shave",         ex: "Il se rase le matin.",         exEn: "He shaves in the morning.",
+    neg: "Il ne se rase pas le matin.",         negEn: "He doesn't shave in the morning.",
+    full: ["me rase","te rases","se rase","nous rasons","vous rasez","se rasent"] },
+  { inf: "se maquiller",  en: "to put on makeup", ex: "Elle se maquille.",            exEn: "She puts on makeup.",
+    neg: "Elle ne se maquille pas.",            negEn: "She doesn't put on makeup.",
+    full: ["me maquille","te maquilles","se maquille","nous maquillons","vous maquillez","se maquillent"] },
+  { inf: "se marier",     en: "to get married",   ex: "Ils se marient en été.",       exEn: "They get married in summer.",
+    neg: "Ils ne se marient pas en été.",       negEn: "They don't get married in summer.",
+    full: ["me marie","te maries","se marie","nous marions","vous mariez","se marient"] },
+  { inf: "se fâcher",     en: "to get angry",     ex: "Il se fâche vite.",            exEn: "He gets angry quickly.",
+    neg: "Il ne se fâche pas vite.",            negEn: "He doesn't get angry quickly.",
+    full: ["me fâche","te fâches","se fâche","nous fâchons","vous fâchez","se fâchent"] },
+  { inf: "s'ennuyer",     en: "to get bored",     ex: "Je m'ennuie ici.",             exEn: "I'm bored here.",
+    neg: "Je ne m'ennuie pas ici.",             negEn: "I'm not bored here.",
+    full: ["m'ennuie","t'ennuies","s'ennuie","nous ennuyons","vous ennuyez","s'ennuient"] },
+  { inf: "se tromper",    en: "to be mistaken",   ex: "Je me trompe souvent.",        exEn: "I'm often mistaken.",
+    neg: "Je ne me trompe pas souvent.",        negEn: "I'm not often mistaken.",
+    full: ["me trompe","te trompes","se trompe","nous trompons","vous trompez","se trompent"] }
+];
+
+/* ---------- Phrases négatives pour les groupes existants ---------- */
+/* clé = infinitif ; valeur = [phrase FR négative, traduction EN] */
+const NEGATIONS = {
+  groupe1: {
+    "parler":     ["Je ne parle pas français.",        "I don't speak French."],
+    "aimer":      ["Tu n'aimes pas le café.",          "You don't like coffee."],
+    "manger":     ["Nous ne mangeons pas de pain.",    "We don't eat bread."],
+    "regarder":   ["Nous ne regardons pas la télé.",   "We don't watch TV."],
+    "travailler": ["Tu ne travailles pas beaucoup.",   "You don't work a lot."],
+    "jouer":      ["Les enfants ne jouent pas dehors.","The children don't play outside."],
+    "écouter":    ["Je n'écoute pas la musique.",       "I don't listen to music."],
+    "trouver":    ["Ils ne trouvent pas la solution.", "They don't find the solution."],
+    "habiter":    ["Vous n'habitez pas à Paris.",       "You don't live in Paris."],
+    "acheter":    ["Il n'achète pas de lait.",          "He doesn't buy milk."],
+    "donner":     ["Nous ne donnons pas de cadeau.",   "We don't give a gift."],
+    "adorer":     ["Je n'adore pas le chocolat.",       "I don't love chocolate."],
+    "chanter":    ["Vous ne chantez pas bien.",        "You don't sing well."],
+    "fermer":     ["Il ne ferme pas la fenêtre.",      "He doesn't close the window."]
+  },
+  groupe2: {
+    "finir":      ["Je ne finis pas mes devoirs.",     "I don't finish my homework."],
+    "choisir":    ["Tu ne choisis pas de livre.",      "You don't choose a book."],
+    "réussir":    ["Il ne réussit pas l'examen.",      "He doesn't pass the exam."],
+    "obéir":      ["Les chiens n'obéissent pas.",       "The dogs don't obey."],
+    "remplir":    ["Vous ne remplissez pas le verre.", "You don't fill the glass."],
+    "réfléchir":  ["Nous ne réfléchissons pas au problème.", "We don't think about the problem."],
+    "grossir":    ["Je ne grossis pas en hiver.",      "I don't gain weight in winter."],
+    "nourrir":    ["Je ne nourris pas le chat.",       "I don't feed the cat."],
+    "salir":      ["Les enfants ne salissent pas tout.", "The children don't make everything dirty."],
+    "applaudir":  ["Nous n'applaudissons pas les acteurs.", "We don't applaud the actors."],
+    "ralentir":   ["La voiture ne ralentit pas.",      "The car doesn't slow down."],
+    "guérir":     ["Le patient ne guérit pas vite.",   "The patient doesn't heal quickly."]
+  },
+  autres: {
+    "être":       ["Je ne suis pas fatigué.",          "I'm not tired."],
+    "avoir":      ["Je n'ai pas faim.",                 "I'm not hungry."],
+    "aller":      ["Je ne vais pas au marché.",        "I don't go to the market."],
+    "faire":      ["Je ne fais pas de sport.",         "I don't do sports."],
+    "pouvoir":    ["Je ne peux pas venir.",            "I can't come."],
+    "vouloir":    ["Je ne veux pas dormir.",           "I don't want to sleep."],
+    "savoir":     ["Je ne sais pas nager.",            "I don't know how to swim."],
+    "voir":       ["Je ne vois pas la mer.",           "I don't see the sea."],
+    "prendre":    ["Je ne prends pas le bus.",         "I don't take the bus."],
+    "boire":      ["Je ne bois pas d'eau.",            "I don't drink water."],
+    "lire":       ["Je ne lis pas de livre.",          "I don't read a book."],
+    "comprendre": ["Je ne comprends pas la leçon.",    "I don't understand the lesson."],
+    "tenir":      ["Je ne tiens pas ta main.",         "I'm not holding your hand."],
+    "dormir":     ["Je ne dors pas bien.",             "I don't sleep well."]
+  }
+};
+
+/* ---------- ARTICLES : phrases pour le quiz ---------- */
+const ARTICLES_QUIZ = [
+  // Articles
+  { ex: "un chien",                    exEn: "a dog" },
+  { ex: "une maison",                  exEn: "a house" },
+  { ex: "des livres",                  exEn: "some books" },
+  { ex: "le soleil",                   exEn: "the sun" },
+  { ex: "la lune",                     exEn: "the moon" },
+  { ex: "les enfants",                 exEn: "the children" },
+  { ex: "l'école",                     exEn: "the school" },
+  { ex: "C'est une pomme.",            exEn: "It's an apple." },
+  { ex: "Je vois un chat.",            exEn: "I see a cat." },
+  { ex: "Voici la voiture.",           exEn: "Here is the car." },
+  // Possessifs
+  { ex: "mon frère",                   exEn: "my brother" },
+  { ex: "ma sœur",                     exEn: "my sister" },
+  { ex: "mes parents",                 exEn: "my parents" },
+  { ex: "ton livre",                   exEn: "your book" },
+  { ex: "ta maison",                   exEn: "your house" },
+  { ex: "son chien",                   exEn: "his / her dog" },
+  { ex: "sa voiture",                  exEn: "his / her car" },
+  { ex: "ses amis",                    exEn: "his / her friends" },
+  { ex: "notre maison",                exEn: "our house" },
+  { ex: "leur voiture",                exEn: "their car" },
+  { ex: "C'est mon sac.",              exEn: "It's my bag." },
+  // Démonstratifs
+  { ex: "ce livre",                    exEn: "this book" },
+  { ex: "cet homme",                   exEn: "this man" },
+  { ex: "cette femme",                 exEn: "this woman" },
+  { ex: "ces enfants",                 exEn: "these children" },
+  { ex: "Ce chat est noir.",           exEn: "This cat is black." },
+  // Prépositions de lieu
+  { ex: "sur la table",                exEn: "on the table" },
+  { ex: "sous la chaise",              exEn: "under the chair" },
+  { ex: "dans la boîte",               exEn: "in the box" },
+  { ex: "devant la maison",            exEn: "in front of the house" },
+  { ex: "derrière la porte",           exEn: "behind the door" },
+  { ex: "à la maison",                 exEn: "at home" },
+  { ex: "entre les arbres",            exEn: "between the trees" },
+  { ex: "chez moi",                    exEn: "at my place" },
+  { ex: "Le chat est sous la table.",  exEn: "The cat is under the table." },
+  { ex: "Le livre est sur le bureau.", exEn: "The book is on the desk." }
+];
+
+if (typeof module !== "undefined") module.exports = { PRONOMINAUX, NEGATIONS, ARTICLES_QUIZ };

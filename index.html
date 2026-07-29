@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apprendre le français</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>🇫🇷 Apprendre le français</h1>
+    <p class="tagline">Learn French from English</p>
+  </header>
+
+  <!-- Étape 0 : section -->
+  <nav id="rootMenu" class="screen">
+    <h2>Que veux-tu réviser ?</h2>
+    <div class="cards">
+      <button class="card" data-section="verbes">🗣️ <span>Verbes</span><small>conjugaison, phrases, négation, pronominaux</small></button>
+      <button class="card" data-section="articles">📝 <span>Articles &amp; petits mots</span><small>un, le, mon, ce, sur, dans…</small></button>
+    </div>
+  </nav>
+
+  <!-- Étape 1 (VERBES) : mode -->
+  <section id="nav" class="screen hidden">
+    <button class="back" data-back="rootMenu">← Accueil</button>
+    <h2>Que veux-tu faire ?</h2>
+    <div class="cards">
+      <button class="card" data-mode="liste">📖 <span>Liste</span><small>voir les verbes &amp; phrases</small></button>
+      <button class="card" data-mode="quiz">🎯 <span>Quiz</span><small>clique pour la traduction</small></button>
+    </div>
+  </section>
+
+  <!-- Étape 2 (VERBES) : groupe -->
+  <section id="groupPicker" class="screen hidden">
+    <button class="back" data-back="nav">← Retour</button>
+    <h2 id="groupTitle">Choisis un groupe</h2>
+    <div class="cards">
+      <button class="card" data-group="groupe1">1️⃣ <span>1er groupe</span><small>verbes en -er</small></button>
+      <button class="card" data-group="groupe2">2️⃣ <span>2e groupe</span><small>verbes en -ir</small></button>
+      <button class="card" data-group="autres">3️⃣ <span>Autres verbes</span><small>être, avoir, aller…</small></button>
+      <button class="card" data-group="pronominaux">🔁 <span>Verbes pronominaux</span><small>se lever, s'habiller…</small></button>
+    </div>
+  </section>
+
+  <!-- Liste (partagée) -->
+  <section id="listeView" class="screen hidden">
+    <div class="bar">
+      <button class="back" id="listeBack" data-back="groupPicker">← Retour</button>
+      <div class="toggles">
+        <div class="toggle" id="listToggle">
+          <button data-show="verbes" class="active">Verbes</button>
+          <button data-show="phrases">Phrases</button>
+        </div>
+        <div class="toggle" id="listNeg">
+          <button data-neg="aff" class="active">Affirmatif</button>
+          <button data-neg="neg">Négatif</button>
+        </div>
+        <div class="toggle" id="listDir">
+          <button data-dir="enfr" class="active">🇬🇧→🇫🇷</button>
+          <button data-dir="fren">🇫🇷→🇬🇧</button>
+        </div>
+      </div>
+    </div>
+    <h2 id="listeTitle"></h2>
+    <div id="listeContent"></div>
+  </section>
+
+  <!-- Quiz (partagé : verbes ET articles) -->
+  <section id="quizView" class="screen hidden">
+    <div class="bar">
+      <button class="back" id="quizBack" data-back="groupPicker">← Retour</button>
+      <div class="toggles">
+        <div class="toggle" id="quizToggle">
+          <button data-show="verbes" class="active">Verbes</button>
+          <button data-show="phrases">Phrases</button>
+        </div>
+        <div class="toggle" id="quizNeg">
+          <button data-neg="aff" class="active">Affirmatif</button>
+          <button data-neg="neg">Négatif</button>
+        </div>
+        <div class="toggle" id="quizDir">
+          <button data-dir="enfr" class="active">🇬🇧→🇫🇷</button>
+          <button data-dir="fren">🇫🇷→🇬🇧</button>
+        </div>
+      </div>
+    </div>
+    <h2 id="quizTitle"></h2>
+    <div id="quizCard" class="quizcard">
+      <div class="progress" id="quizProgress"></div>
+      <div class="prompt" id="quizPrompt"></div>
+      <div class="answer hidden" id="quizAnswer"></div>
+      <button id="revealBtn" class="primary">Voir la traduction</button>
+      <button id="nextBtn" class="primary hidden">Suivant →</button>
+    </div>
+  </section>
+
+  <!-- ARTICLES : menu -->
+  <section id="articlesMenu" class="screen hidden">
+    <button class="back" data-back="rootMenu">← Accueil</button>
+    <h2>Articles &amp; petits mots</h2>
+    <div class="cards">
+      <button class="card" data-articles="lesson">📚 <span>Explications</span><small>articles, possessifs, démonstratifs, prépositions</small></button>
+      <button class="card" data-articles="quiz">🎯 <span>Quiz</span><small>petites phrases à traduire</small></button>
+    </div>
+  </section>
+
+  <!-- ARTICLES : leçon -->
+  <section id="lessonView" class="screen hidden">
+    <button class="back" data-back="articlesMenu">← Retour</button>
+    <h2>Explications</h2>
+
+    <article class="lesson">
+      <h3>1. Les articles</h3>
+      <p><b>Indéfinis</b> (a / an / some) — on ne sait pas de qui/quoi précisément :</p>
+      <ul>
+        <li><b>un</b> (masculin) : <i>un chien</i> — a dog</li>
+        <li><b>une</b> (féminin) : <i>une maison</i> — a house</li>
+        <li><b>des</b> (pluriel) : <i>des livres</i> — some books</li>
+      </ul>
+      <p><b>Définis</b> (the) — quelque chose de précis :</p>
+      <ul>
+        <li><b>le</b> (masculin) : <i>le soleil</i> — the sun</li>
+        <li><b>la</b> (féminin) : <i>la lune</i> — the moon</li>
+        <li><b>l'</b> (devant voyelle ou h) : <i>l'école, l'homme</i> — the school, the man</li>
+        <li><b>les</b> (pluriel) : <i>les enfants</i> — the children</li>
+      </ul>
+
+      <h3>2. Les possessifs</h3>
+      <p>Ils s'accordent avec l'objet possédé, pas avec le possesseur.</p>
+      <table class="grid">
+        <tr><th></th><th>masc.</th><th>fém.</th><th>pluriel</th></tr>
+        <tr><td>my</td><td>mon</td><td>ma</td><td>mes</td></tr>
+        <tr><td>your</td><td>ton</td><td>ta</td><td>tes</td></tr>
+        <tr><td>his / her</td><td>son</td><td>sa</td><td>ses</td></tr>
+        <tr><td>our</td><td colspan="2">notre</td><td>nos</td></tr>
+        <tr><td>your (pl.)</td><td colspan="2">votre</td><td>vos</td></tr>
+        <tr><td>their</td><td colspan="2">leur</td><td>leurs</td></tr>
+      </table>
+      <p><i>mon frère</i> — my brother · <i>ma sœur</i> — my sister · <i>ses amis</i> — his/her friends</p>
+      <p class="tip">💡 <i>son / sa / ses</i> = « his » <b>et</b> « her » : le français ne distingue pas le genre du possesseur.</p>
+
+      <h3>3. Les démonstratifs (this / that / these)</h3>
+      <ul>
+        <li><b>ce</b> (masculin) : <i>ce livre</i> — this book</li>
+        <li><b>cet</b> (masculin devant voyelle/h) : <i>cet homme</i> — this man</li>
+        <li><b>cette</b> (féminin) : <i>cette femme</i> — this woman</li>
+        <li><b>ces</b> (pluriel) : <i>ces enfants</i> — these children</li>
+      </ul>
+
+      <h3>4. Les prépositions de lieu</h3>
+      <ul>
+        <li><b>à</b> — at / to : <i>à la maison</i> — at home</li>
+        <li><b>dans</b> — in : <i>dans la boîte</i> — in the box</li>
+        <li><b>sur</b> — on : <i>sur la table</i> — on the table</li>
+        <li><b>sous</b> — under : <i>sous la chaise</i> — under the chair</li>
+        <li><b>devant</b> — in front of : <i>devant la maison</i></li>
+        <li><b>derrière</b> — behind : <i>derrière la porte</i></li>
+        <li><b>entre</b> — between : <i>entre les arbres</i></li>
+        <li><b>chez</b> — at (someone's place) : <i>chez moi</i> — at my place</li>
+      </ul>
+
+      <h3>5. La négation</h3>
+      <p>On encadre le verbe avec <b>ne … pas</b> :</p>
+      <ul>
+        <li><i>Je parle.</i> → <i>Je <b>ne</b> parle <b>pas</b>.</i> — I don't speak.</li>
+        <li><i>ne</i> devient <i>n'</i> devant une voyelle : <i>Je <b>n'</b>aime <b>pas</b>.</i></li>
+        <li>Après la négation, <i>un/une/du/des</i> → <b>de</b> : <i>Je mange du pain</i> → <i>Je ne mange <b>pas de</b> pain.</i></li>
+      </ul>
+    </article>
+  </section>
+
+  <script src="data.js"></script>
+  <script src="extras.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
