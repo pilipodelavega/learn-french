@@ -273,6 +273,7 @@ function showQuizCard() {
     curFrenchAudio = v.fr;
   } else if (state.show === "verbes") {
     const forms = conjugate(v, state.group).map((f, i) => withPronoun(i, f)).join("\n");
+    curFrenchAudio = v.inf;
     if (enfr) {
       promptEl.textContent = v.en;
       answerEl.innerHTML = `${v.inf}<span class="sub">${forms}</span>`;
