@@ -209,6 +209,21 @@ function renderListe() {
 
 let quizItems = [];
 let quizIndex = 0;
+let curFrenchAudio = null; // texte FR à prononcer pour la carte courante (null = pas de bouton audio)
+
+// Lit un texte français avec la synthèse vocale du navigateur.
+function speakFrench(text) {
+  if (!text || !("speechSynthesis" in window)) return;
+  window.speechSynthesis.cancel(); // interrompt une lecture précédente
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = "fr-FR";
+  utter.rate = 0.95;
+  const frVoice = window.speechSynthesis.getVoices().find(v => v.lang && v.lang.startsWith("fr"));
+  if (frVoice) utter.voice = frVoice;
+  window.speechSynthesis.speak(utter);
+}
+// Précharge la liste des voix (asynchrone dans certains navigateurs).
+if ("speechSynthesis" in window) window.speechSynthesis.getVoices();
 
 function shuffle(arr) {
   const a = arr.slice();
@@ -247,6 +262,7 @@ function showQuizCard() {
   const v = quizItems[quizIndex];
   const enfr = state.dir === "enfr"; // on montre l'anglais, deviner le français
   document.getElementById("quizProgress").textContent = `${quizIndex + 1} / ${quizItems.length}`;
+  curFrenchAudio = null;
 
   if (state.section === "articles") {
     promptEl.textContent = enfr ? v.exEn : v.ex;
@@ -254,6 +270,7 @@ function showQuizCard() {
   } else if (state.section === "vocabulaire") {
     promptEl.textContent = enfr ? v.en : v.fr;
     answerEl.innerHTML   = enfr ? v.fr : v.en;
+    curFrenchAudio = v.fr;
   } else if (state.show === "verbes") {
     const forms = conjugate(v, state.group).map((f, i) => withPronoun(i, f)).join("\n");
     if (enfr) {
@@ -270,18 +287,23 @@ function showQuizCard() {
     const forms = conjugate(v, state.group).map((f, i) => withPronoun(i, f)).join("\n");
     promptEl.textContent = enfr ? en : fr;
     answerEl.innerHTML = `${enfr ? fr : en}<span class="sub"><b>${v.inf}</b> — ${v.en}\n${forms}</span>`;
+    curFrenchAudio = fr;
   }
 
   answerEl.classList.add("hidden");
   revealBtn.classList.remove("hidden");
   nextBtn.classList.add("hidden");
+  document.getElementById("speakBtn").classList.add("hidden");
 }
 
 document.getElementById("revealBtn").addEventListener("click", () => {
   document.getElementById("quizAnswer").classList.remove("hidden");
   document.getElementById("revealBtn").classList.add("hidden");
   document.getElementById("nextBtn").classList.remove("hidden");
+  document.getElementById("speakBtn").classList.toggle("hidden", !curFrenchAudio);
 });
+
+document.getElementById("speakBtn").addEventListener("click", () => speakFrench(curFrenchAudio));
 
 document.getElementById("nextBtn").addEventListener("click", () => {
   quizIndex++;
