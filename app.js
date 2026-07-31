@@ -46,7 +46,7 @@ function elide(i, form) {
 /* ---------- Navigation entre écrans ---------- */
 
 const screens = ["rootMenu", "nav", "groupPicker", "listeView", "quizView", "articlesMenu", "lessonView",
-                 "levelPicker", "storyList", "storyView", "storyQuiz"];
+                 "levelPicker", "storyList", "storyView", "storyQuiz", "vocabLevelPicker"];
 function show(id) {
   screens.forEach(s => document.getElementById(s).classList.toggle("hidden", s !== id));
   window.scrollTo(0, 0);
@@ -61,6 +61,7 @@ document.querySelectorAll("#rootMenu .card").forEach(btn => {
     state.section = btn.dataset.section;
     if (state.section === "verbes")   show("nav");
     else if (state.section === "articles") show("articlesMenu");
+    else if (state.section === "vocabulaire") show("vocabLevelPicker");
     else show("levelPicker");
   });
 });
@@ -100,6 +101,16 @@ document.querySelectorAll("#articlesMenu .card").forEach(btn => {
       document.getElementById("quizBack").dataset.back = "articlesMenu";
       refreshQuiz(); show("quizView");
     }
+  });
+});
+
+// Menu Vocabulaire -> choix du niveau -> quiz direct
+document.querySelectorAll("#vocabLevelPicker .card").forEach(btn => {
+  btn.addEventListener("click", () => {
+    state.section = "vocabulaire";
+    state.vlevel = btn.dataset.vlevel;
+    document.getElementById("quizBack").dataset.back = "vocabLevelPicker";
+    refreshQuiz(); show("quizView");
   });
 });
 
@@ -143,6 +154,7 @@ wireToggle("quizDir",    "dir", refreshQuiz);
 // Renvoie la liste d'items du contexte courant (verbes du groupe, filtrés si négation).
 function currentItems() {
   if (state.section === "articles") return ARTICLES_QUIZ;
+  if (state.section === "vocabulaire") return VOCAB[state.vlevel] || [];
   let items = DATA[state.group].verbs;
   if (state.show === "phrases" && state.neg === "neg") items = items.filter(v => v.neg);
   return items;
@@ -208,7 +220,9 @@ function shuffle(arr) {
 }
 
 function startQuiz() {
-  const title = state.section === "articles" ? "Articles & petits mots" : DATA[state.group].label;
+  const title = state.section === "articles" ? "Articles & petits mots"
+    : state.section === "vocabulaire" ? `Vocabulaire — ${LEVEL_LABEL[state.vlevel] || state.vlevel}`
+    : DATA[state.group].label;
   document.getElementById("quizTitle").textContent = title;
   quizItems = shuffle(currentItems());
   quizIndex = 0;
@@ -237,6 +251,9 @@ function showQuizCard() {
   if (state.section === "articles") {
     promptEl.textContent = enfr ? v.exEn : v.ex;
     answerEl.innerHTML   = enfr ? v.ex   : v.exEn;
+  } else if (state.section === "vocabulaire") {
+    promptEl.textContent = enfr ? v.en : v.fr;
+    answerEl.innerHTML   = enfr ? v.fr : v.en;
   } else if (state.show === "verbes") {
     const forms = conjugate(v, state.group).map((f, i) => withPronoun(i, f)).join("\n");
     if (enfr) {
@@ -288,6 +305,15 @@ const LEVEL_LABEL = {
   A1: "A1 — Débutant", A2: "A2 — Élémentaire",
   B1: "B1 — Intermédiaire", B2: "B2 — Avancé"
 };
+
+/* ---------- VOCABULAIRE ---------- */
+
+// Les niveaux sont fournis par vocab-a1.js … vocab-b2.js
+const VOCAB = {};
+[["A1", "VOCAB_A1"], ["A2", "VOCAB_A2"], ["B1", "VOCAB_B1"], ["B2", "VOCAB_B2"]]
+  .forEach(([lvl, varName]) => {
+    if (typeof window[varName] !== "undefined") VOCAB[lvl] = window[varName];
+  });
 
 let curLevel = "A1";
 let curStory = null;

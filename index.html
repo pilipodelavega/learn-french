@@ -19,6 +19,7 @@
       <button class="card" data-section="verbes">🗣️ <span>Verbes</span><small>conjugaison, phrases, négation, pronominaux</small></button>
       <button class="card" data-section="articles">📝 <span>Articles &amp; petits mots</span><small>un, le, mon, ce, sur, dans…</small></button>
       <button class="card" data-section="histoires">📚 <span>Histoires</span><small>lecture + quiz de compréhension (A1 → B2)</small></button>
+      <button class="card" data-section="vocabulaire">🧠 <span>Vocabulaire</span><small>quiz de mots par niveau (A1 → B2)</small></button>
     </div>
   </nav>
 
@@ -183,6 +184,18 @@
     </div>
   </section>
 
+  <!-- VOCABULAIRE : choix du niveau -->
+  <section id="vocabLevelPicker" class="screen hidden">
+    <button class="back" data-back="rootMenu">← Accueil</button>
+    <h2>Vocabulaire — choisis ton niveau</h2>
+    <div class="cards">
+      <button class="card" data-vlevel="A1">🌱 <span>A1 — Débutant</span><small>mots du quotidien</small></button>
+      <button class="card" data-vlevel="A2">🌿 <span>A2 — Élémentaire</span><small>vocabulaire courant</small></button>
+      <button class="card" data-vlevel="B1">🌳 <span>B1 — Intermédiaire</span><small>vocabulaire plus varié</small></button>
+      <button class="card" data-vlevel="B2">🍁 <span>B2 — Avancé</span><small>vocabulaire nuancé</small></button>
+    </div>
+  </section>
+
   <!-- HISTOIRES : liste des histoires du niveau -->
   <section id="storyList" class="screen hidden">
     <button class="back" data-back="levelPicker">← Niveaux</button>
@@ -223,6 +236,10 @@
   <script src="stories-a2.js"></script>
   <script src="stories-b1.js"></script>
   <script src="stories-b2.js"></script>
+  <script src="vocab-a1.js"></script>
+  <script src="vocab-a2.js"></script>
+  <script src="vocab-b1.js"></script>
+  <script src="vocab-b2.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
