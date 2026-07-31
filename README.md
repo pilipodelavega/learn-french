@@ -32,4 +32,11 @@ Tout le contenu est dans **`data.js`**. Ajoute un objet dans le bon groupe :
 - Groupes 1 et 2 : la conjugaison est **générée automatiquement**.
   Pour une exception d'orthographe, ajoute `over: { 3: "mangeons" }` (index 0=je … 5=ils).
 - Autres verbes : fournis les 6 formes dans `full: ["suis","es","est","sommes","êtes","sont"]`.
+
+## Après chaque déploiement : penser au cache
+Tous les `<script>` et `<link>` de `index.html` ont un paramètre `?v=N`.
+**À chaque modification de JS/CSS, incrémente ce numéro** (ex: `v=3` → `v=4`) pour forcer
+les navigateurs à recharger les nouveaux fichiers au lieu de servir une version en cache.
+Sans ça, GitHub Pages peut être à jour côté serveur alors que les visiteurs voient encore
+l'ancienne version tant que leur navigateur ne vide pas son cache.
 ```
