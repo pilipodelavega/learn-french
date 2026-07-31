@@ -319,6 +319,27 @@ let curLevel = "A1";
 let curStory = null;
 let sqIndex = 0, sqScore = 0, sqLocked = false;
 
+// Progression des histoires réussies (10/10), persistée dans le navigateur.
+const STORY_DONE_KEY = "lf_completed_stories";
+
+function loadCompletedStories() {
+  try { return JSON.parse(localStorage.getItem(STORY_DONE_KEY)) || {}; }
+  catch (e) { return {}; }
+}
+
+function isStoryDone(level, titre) {
+  const done = loadCompletedStories();
+  return !!(done[level] && done[level][titre]);
+}
+
+function markStoryDone(level, titre) {
+  const done = loadCompletedStories();
+  if (!done[level]) done[level] = {};
+  done[level][titre] = true;
+  try { localStorage.setItem(STORY_DONE_KEY, JSON.stringify(done)); }
+  catch (e) { /* stockage indisponible (navigation privée…) : on ignore silencieusement */ }
+}
+
 // Niveau -> liste des histoires
 document.querySelectorAll("#levelPicker .card").forEach(btn => {
   btn.addEventListener("click", () => {
@@ -341,11 +362,12 @@ function renderStoryList() {
   }
 
   list.forEach((s, i) => {
+    const done = isStoryDone(curLevel, s.titre);
     const b = document.createElement("button");
-    b.className = "card story-card";
+    b.className = "card story-card" + (done ? " done" : "");
     b.innerHTML =
-      `<div class="num">${i + 1}</div>
-       <div class="t"><span>${s.titre}</span><small>${s.questions.length} questions</small></div>`;
+      `<div class="num">${done ? "✅" : i + 1}</div>
+       <div class="t"><span>${s.titre}</span><small>${done ? "Terminée · " : ""}${s.questions.length} questions</small></div>`;
     b.addEventListener("click", () => openStory(i));
     box.appendChild(b);
   });
@@ -434,6 +456,8 @@ function showResult() {
     pct >= 0.8  ? "Très bien ! Presque parfait 👏" :
     pct >= 0.5  ? "Pas mal — relis l'histoire et réessaie 🙂" :
                   "Courage ! Relis l'histoire tranquillement 💪";
+
+  if (pct === 1) markStoryDone(curLevel, curStory.titre);
 }
 
 document.getElementById("sqRetry").addEventListener("click", () => {
@@ -443,7 +467,10 @@ document.getElementById("sqRetry").addEventListener("click", () => {
   showQuestion();
 });
 
-document.getElementById("sqBackList").addEventListener("click", () => show("storyList"));
+document.getElementById("sqBackList").addEventListener("click", () => {
+  renderStoryList(); // pour refléter immédiatement le badge "Terminée"
+  show("storyList");
+});
 
 /* ---------- Démarrage ---------- */
 show("rootMenu");
