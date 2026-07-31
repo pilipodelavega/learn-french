@@ -490,6 +490,9 @@ document.getElementById("sqRetry").addEventListener("click", () => {
   showQuestion();
 });
 
+document.getElementById("sqSpeakBtn").addEventListener("click", () =>
+  speakFrench(document.getElementById("sqQuestion").textContent));
+
 document.getElementById("sqBackList").addEventListener("click", () => {
   renderStoryList(); // pour refléter immédiatement le badge "Terminée"
   show("storyList");
